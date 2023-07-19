@@ -9,6 +9,10 @@ import Foundation
 
 public class ConsoleLogger : LogWriter {
     
+    public init() {
+        
+    }
+    
     public func write(message: String) {
         print(message)
     }
