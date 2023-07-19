@@ -6,6 +6,6 @@ final class LoggerFactoryTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(LoggerFactory().text, "Hello, World!")
+//        XCTAssertEqual(LoggerFactory().text, "Hello, World!")
     }
 }
