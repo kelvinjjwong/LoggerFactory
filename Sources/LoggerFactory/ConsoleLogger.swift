@@ -7,9 +7,9 @@
 
 import Foundation
 
-class ConsoleLogger : LogWriter {
+public class ConsoleLogger : LogWriter {
     
-    func write(message: String) {
+    public func write(message: String) {
         print(message)
     }
     

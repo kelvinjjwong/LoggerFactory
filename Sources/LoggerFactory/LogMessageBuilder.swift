@@ -17,14 +17,14 @@ protocol LogMessageBuilderInterface {
     func build(logType:LogType, error:Error) -> String
 }
 
-class LogMessageBuilder : LogMessageBuilderInterface {
+public class LogMessageBuilder : LogMessageBuilderInterface {
     
     private let dtFormatter = ISO8601DateFormatter()
     
     private var category:String = ""
     private var subCategory:String = ""
     
-    init(category:String, subCategory:String) {
+    public init(category:String, subCategory:String) {
         self.category = category
         self.subCategory = subCategory
     }
@@ -37,7 +37,7 @@ class LogMessageBuilder : LogMessageBuilderInterface {
         }
     }
     
-    func build(logType:LogType, message:String, error:Error?) -> String {
+    public func build(logType:LogType, message:String, error:Error?) -> String {
         if let error = error {
             return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
         }else{
@@ -45,7 +45,7 @@ class LogMessageBuilder : LogMessageBuilderInterface {
         }
     }
     
-    func build(logType:LogType, message:Int, error:Error?) -> String {
+    public func build(logType:LogType, message:Int, error:Error?) -> String {
         if let error = error {
             return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
         }else{
@@ -53,7 +53,7 @@ class LogMessageBuilder : LogMessageBuilderInterface {
         }
     }
     
-    func build(logType:LogType, message:Double, error:Error?) -> String {
+    public func build(logType:LogType, message:Double, error:Error?) -> String {
         if let error = error {
             return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
         }else{
@@ -61,7 +61,7 @@ class LogMessageBuilder : LogMessageBuilderInterface {
         }
     }
     
-    func build(logType:LogType, message:Float, error:Error?) -> String {
+    public func build(logType:LogType, message:Float, error:Error?) -> String {
         if let error = error {
             return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
         }else{
@@ -69,7 +69,7 @@ class LogMessageBuilder : LogMessageBuilderInterface {
         }
     }
     
-    func build(logType:LogType, message:Any, error:Error?) -> String {
+    public func build(logType:LogType, message:Any, error:Error?) -> String {
         if let error = error {
             return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
         }else{
@@ -77,7 +77,7 @@ class LogMessageBuilder : LogMessageBuilderInterface {
         }
     }
     
-    func build(logType:LogType, error:Error) -> String {
+    public func build(logType:LogType, error:Error) -> String {
         return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(error)"
     }
 }

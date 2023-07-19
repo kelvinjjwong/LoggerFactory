@@ -7,17 +7,17 @@
 
 import Foundation
 
-class FileLogger : LogWriter {
+public class FileLogger : LogWriter {
     
     fileprivate var logFileUrl:URL
     
-    init(pathOfFolder: String) {
+    public init(pathOfFolder: String) {
         self.logFileUrl = URL(fileURLWithPath: pathOfFolder)
         print("Writing log to file: \(logFileUrl.path)")
         self.write(message: "Writing log to file: \(logFileUrl.path)")
     }
     
-    convenience init() {
+    public convenience init() {
         if #available(macOS 13.0, *) {
             self.init(pathOfFolder: Self.defaultLoggingDirectory().appending(path: Self.defaultLoggingFilename()).path())
         } else {
@@ -49,7 +49,7 @@ class FileLogger : LogWriter {
         return url
     }
     
-    func write(message:String) {
+    public func write(message:String) {
         DispatchQueue.global().async {
             
             do {
