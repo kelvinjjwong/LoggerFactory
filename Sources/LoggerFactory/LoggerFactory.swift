@@ -210,7 +210,7 @@ public class LoggerFactory {
     }
     
     public static func get(category:String, subCategory:String = "", includeTypes:[LogType] = [], excludeTypes:[LogType] = []) -> Logger {
-        return Logger(category: category, subCategory: subCategory)
+        return Logger(category: category, subCategory: subCategory, includeTypes: includeTypes, excludeTypes: excludeTypes)
     }
     
 }
