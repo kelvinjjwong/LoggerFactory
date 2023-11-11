@@ -31,7 +31,7 @@ extension String {
             try FileManager.default.createDirectory(atPath: self, withIntermediateDirectories: true, attributes: nil)
         }catch{
             if let logger = logger {
-                logger.log(error)
+                logger.log(.error, error)
             }
             return (false, error)
         }

@@ -104,7 +104,7 @@ public class Logger {
     
     public func log(_ logType:LogType, _ message:Int) {
         guard self.displayTypes.contains(logType) else {return}
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         let logWriters = LoggerFactory.writers
         for writer in logWriters {
             writer.write(message: msg)
@@ -122,7 +122,7 @@ public class Logger {
     
     public func log(_ logType:LogType, _ message:Double) {
         guard self.displayTypes.contains(logType) else {return}
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         let logWriters = LoggerFactory.writers
         for logger in logWriters {
             logger.write(message: msg)
@@ -139,7 +139,7 @@ public class Logger {
     }
     public func log(_ logType:LogType, _ message:Float) {
         guard self.displayTypes.contains(logType) else {return}
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         let logWriters = LoggerFactory.writers
         for writer in logWriters {
             writer.write(message: msg)
@@ -157,7 +157,7 @@ public class Logger {
     
     public func log(_ logType:LogType, _ message:Any) {
         guard self.displayTypes.contains(logType) else {return}
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         let logWriters = LoggerFactory.writers
         for logger in logWriters {
             logger.write(message: msg)
@@ -175,7 +175,7 @@ public class Logger {
     
     public func log(_ logType:LogType, _ message:Error) {
         guard self.displayTypes.contains(logType) else {return}
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         let logWriters = LoggerFactory.writers
         for writer in logWriters {
             writer.write(message: msg)
@@ -193,7 +193,7 @@ public class Logger {
     
     public func log(_ logType:LogType, _ message:String, _ error:Error) {
         guard self.displayTypes.contains(logType) else {return}
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: error)
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: error)
         let logWriters = LoggerFactory.writers
         for writer in logWriters {
             writer.write(message: msg)

@@ -39,45 +39,45 @@ public class LogMessageBuilder : LogMessageBuilderInterface {
     
     public func build(logType:LogType, message:String, error:Error?) -> String {
         if let error = error {
-            return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
+            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
         }else{
-            return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
+            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
         }
     }
     
     public func build(logType:LogType, message:Int, error:Error?) -> String {
         if let error = error {
-            return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
+            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
         }else{
-            return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
+            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
         }
     }
     
     public func build(logType:LogType, message:Double, error:Error?) -> String {
         if let error = error {
-            return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
+            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
         }else{
-            return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
+            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
         }
     }
     
     public func build(logType:LogType, message:Float, error:Error?) -> String {
         if let error = error {
-            return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
+            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
         }else{
-            return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
+            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
         }
     }
     
     public func build(logType:LogType, message:Any, error:Error?) -> String {
         if let error = error {
-            return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
+            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
         }else{
-            return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
+            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
         }
     }
     
     public func build(logType:LogType, error:Error) -> String {
-        return "\(LogType.iconOfType(LogType.info)) \(self.prefix(category: category, subCategory: subCategory)) \(error)"
+        return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(error)"
     }
 }
