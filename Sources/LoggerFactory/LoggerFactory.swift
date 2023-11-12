@@ -287,11 +287,15 @@ extension Logger : LoggerUser {
 
 public class LoggerFactory {
     
-    fileprivate static var writers:[LogWriter] = []
+    fileprivate static var writers:[String:LogWriter] = [:]
     fileprivate static var types:[LogType] = []
     
     public static func append(logWriter:LogWriter) {
-        Self.writers.append(logWriter)
+        Self.writers[logWriter.id()] = logWriter
+    }
+    
+    public static func append(id:String, logWriter:LogWriter) {
+        Self.writers[id] = logWriter
     }
     
     public static func enable(_ types:[LogType]) {
@@ -316,8 +320,8 @@ public class LoggerFactory {
     
     public static func get(category:String, subCategory:String = "", includeTypes:[LogType] = [], excludeTypes:[LogType] = [], destinations:[String] = [ConsoleLogger.id()]) -> Logger {
         let logger = Logger(category: category, subCategory: subCategory, includeTypes: includeTypes, excludeTypes: excludeTypes)
-        for writer in writers {
-            let _ = logger.registerWriter(id: writer.id(), writer: writer)
+        for (id,writer) in writers {
+            let _ = logger.registerWriter(id: id, writer: writer)
         }
         if !self.types.isEmpty {
             logger.displayTypes = self.types
