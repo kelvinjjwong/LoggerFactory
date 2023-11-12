@@ -52,7 +52,30 @@ if [[ $? -eq 0 ]]; then
 fi
 
 pod spec lint $PODSPEC --allow-warnings
-if [[ $? -eq 0 ]]; then
+if [[ $? -ne 0 ]]; then
+    exit -1
+fi
+
+GH=`which gh`
+if [[ "$GH" != "" ]]; then
+    gh pr status
+    gh pr create --title "$CURRENT_VERSION" --body "**Full Changelog**: https://github.com/kelvinjjwong/LoggerFactory/compare/$PREV_VERSION...$CURRENT_VERSION"
+    gh pr list
+    GH_PR=`gh pr list | tail -1 | tr '#' ' ' | awk -F' ' '{print $1}'`
+    gh pr merge $GH_PR -m
+    if [[ $? -ne 0 ]]; then
+        exit -1
+    fi
+    gh pr status
+    git pull
+    git checkout master
+    git pull
+    gh release create $CURRENT_VERSION --generate-notes
+    if [[ $? -ne 0 ]]; then
+        exit -1
+    fi
+    pod trunk push $PODSPEC
+else
     SOURCE_URL=`grep s.source $PODSPEC | head -1 | awk -F'"' '{print $2}' | sed 's/.\{4\}$//'`
     echo "If success, you can then:"
     echo
@@ -63,5 +86,9 @@ if [[ $? -eq 0 ]]; then
     echo ""
     echo "2 # push new version to Cocoapods trunk"
     echo "pod trunk push $PODSPEC"
+    echo
+    echo "OR install GitHub CLI to automate these steps:"
+    echo "brew install gh"
+    echo "https://cli.github.com"
     echo
 fi
