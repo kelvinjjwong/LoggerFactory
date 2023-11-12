@@ -49,6 +49,13 @@ fi
 GIT_BRANCH=`git status | grep "On branch" | head -1 | awk -F' ' '{print $NF}'`
 CURRENT_VERSION=`grep s.version $PODSPEC | head -1 | awk -F' ' '{print $NF}' | sed 's/"//g'`
 
+EXIST_TAG=`git ls-remote --tags origin | tr '/' ' ' | awk -F' ' '{print $NF}' | grep $CURRENT_VERSION`
+if [[ "$EXIST_TAG" != "" ]]; then
+    echo "$CURRENT_VERSION already exist in git repository. Aborted following build steps to avoid duplication."
+    echo
+    exit -1
+fi
+
 if [[ "$GIT_BRANCH" != "$CURRENT_VERSION" ]]; then
     git branch $CURRENT_VERSION
     git checkout $CURRENT_VERSION
