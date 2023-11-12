@@ -2,19 +2,41 @@ if [[ "$1" = "help" ]] || [[ "$1" = "--help" ]]  || [[ "$1" = "--?" ]]; then
    echo "Sample:"
    echo "./build_pod.sh"
    echo "./build_pod.sh version up"
+   echo "./build_pod.sh version up major"
+   echo "./build_pod.sh version up minor"
+   echo "./build_pod.sh version up revision"
    echo "./build_pod.sh version down"
+   echo "./build_pod.sh version down major"
+   echo "./build_pod.sh version down minor"
+   echo "./build_pod.sh version down revision"
    echo
    exit 0
 fi
 
+versionPos="revision"
 versionChange=0
 if [[ "$1 $2" = "version up" ]]; then
    versionChange=1
+   if [[ "$3" = "major" ]]; then
+       versionPos="major"
+   elif [[ "$3" = "minor" ]]; then
+       versionPos="minor"
+   else
+       versionPos="revision"
+   fi
 fi
 
 if [[ "$1 $2" = "version down" ]]; then
    versionChange=-1
+   if [[ "$3" = "major" ]]; then
+       versionPos="major"
+   elif [[ "$3" = "minor" ]]; then
+       versionPos="minor"
+   else
+       versionPos="revision"
+   fi
 fi
+
 
 pod trunk me
 if [[ $? -ne 0 ]]; then
@@ -28,20 +50,27 @@ PREV_VERSION=`grep s.version $PODSPEC | head -1 | awk -F' ' '{print $NF}' | sed 
 
 if [[ $versionChange -ne 0 ]]; then
     if [[ $versionChange -eq 1 ]]; then
-        NEW_VERSION=`echo $PREV_VERSION | awk -F'.' '{print $1"."$2"."$3+1}'`
+        if [[ "$versionPos" = "major" ]]; then
+            NEW_VERSION=`echo $PREV_VERSION | awk -F'.' '{print $1+1".0.0"}'`
+        elif [[ "$versionPos" = "minor" ]]; then
+            NEW_VERSION=`echo $PREV_VERSION | awk -F'.' '{print $1"."$2+1".0"}'`
+        else
+            NEW_VERSION=`echo $PREV_VERSION | awk -F'.' '{print $1"."$2"."$3+1}'`
+        fi
+        
     else
-        NEW_VERSION=`echo $PREV_VERSION | awk -F'.' '{print $1"."$2"."$3-1}'`
+        if [[ "$versionPos" = "major" ]]; then
+            NEW_VERSION=`echo $PREV_VERSION | awk -F'.' '{print $1-1"."$2"."$3}'`
+        elif [[ "$versionPos" = "minor" ]]; then
+            NEW_VERSION=`echo $PREV_VERSION | awk -F'.' '{print $1"."$2-1"."$3}'`
+        else
+            NEW_VERSION=`echo $PREV_VERSION | awk -F'.' '{print $1"."$2"."$3-1}'`
+        fi
     fi
     echo "Current version: $PREV_VERSION"
     echo "   Next version: $NEW_VERSION"
     sed -i .bak -e 's/s.version     = ".*"/s.version     = "'$NEW_VERSION'"/' $PODSPEC; rm -f $PODSPEC.bak
     sed -i .bak -e 's/"'$PREV_VERSION'"/"'$NEW_VERSION'"/g' -e 's/~> '$PREV_VERSION'/~> '$NEW_VERSION'/g' README.md; rm -f README.md.bak
-fi
-
-if [[ $versionChange -eq -1 ]]; then
-   echo "Aborted following build steps due to version downgrade."
-   echo
-   exit 0
 fi
 
 # PUSH CHANGES BEFORE POD TESTING
