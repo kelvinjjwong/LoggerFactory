@@ -9,6 +9,10 @@ import Foundation
 
 public class FileLogger : LogWriter {
     
+    public static func id() -> String {
+        return "file"
+    }
+    
     public func id() -> String {
         return "file"
     }
@@ -16,19 +20,35 @@ public class FileLogger : LogWriter {
     
     fileprivate var logFileUrl:URL
     
-    public init(pathOfFolder: String) {
-        self.logFileUrl = URL(fileURLWithPath: pathOfFolder)
+    public init(pathOfFolder:String, filename:String) {
+        if #available(macOS 13.0, *) {
+            var pathOfFolder = pathOfFolder
+            if pathOfFolder.hasPrefix("~/") {
+                pathOfFolder = pathOfFolder.replacingOccurrences(of: "~/", with: FileLogger.defaultUserHomeDirectory().path())
+            }
+            self.logFileUrl = URL(fileURLWithPath: pathOfFolder).appending(path: filename)
+        }else{
+            var pathOfFolder = pathOfFolder
+            if pathOfFolder.hasPrefix("~/") {
+                pathOfFolder = pathOfFolder.replacingOccurrences(of: "~/", with: FileLogger.defaultUserHomeDirectory().path)
+            }
+            self.logFileUrl = URL(fileURLWithPath: pathOfFolder).appendingPathComponent(filename)
+        }
         print("Writing log to file: \(logFileUrl.path)")
         self.write(message: "Writing log to file: \(logFileUrl.path)")
     }
     
     public convenience init() {
         if #available(macOS 13.0, *) {
-            self.init(pathOfFolder: Self.defaultLoggingDirectory().appending(path: Self.defaultLoggingFilename()).path())
+            self.init(pathOfFolder: Self.defaultLoggingDirectory().path(), filename: Self.defaultLoggingFilename())
         } else {
             // Fallback on earlier versions
-            self.init(pathOfFolder: Self.defaultLoggingDirectory().appendingPathComponent(Self.defaultLoggingFilename()).path)
+            self.init(pathOfFolder: Self.defaultLoggingDirectory().path, filename: Self.defaultLoggingFilename())
         }
+    }
+    
+    public convenience init(pathOfFolder:String) {
+        self.init(pathOfFolder: pathOfFolder, filename: Self.defaultLoggingFilename())
     }
     
     fileprivate static func defaultLoggingFilename() -> String {
@@ -38,10 +58,18 @@ public class FileLogger : LogWriter {
         return "\(datePart).log"
     }
     
+    fileprivate static func defaultUserDocumentsDirectory() -> URL {
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return urls[urls.count - 1]
+    }
+    
+    fileprivate static func defaultUserHomeDirectory() -> URL {
+        return defaultUserDocumentsDirectory().deletingLastPathComponent()
+    }
+    
     fileprivate static func defaultLoggingDirectory() -> URL {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "com.apple.toolsQA.CocoaApp_CD" in the user's Application Support directory.
-        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        let appSupportURL = urls[urls.count - 1]
+        let appSupportURL = defaultUserDocumentsDirectory()
         let url = appSupportURL.appendingPathComponent("log")
         
         if !url.path.isDirectoryExists() {

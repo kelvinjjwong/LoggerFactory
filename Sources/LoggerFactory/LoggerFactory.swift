@@ -229,6 +229,7 @@ extension Logger: LoggerRegister {
     
     public func registerWriter(id: String, writer:LogWriter) -> Self {
         self.writers[id] = writer
+        let _ = self.addDestination(id)
         return self
     }
     
@@ -297,7 +298,6 @@ public class LoggerFactory {
         for writer in writers {
             let _ = logger.registerWriter(id: writer.id(), writer: writer)
         }
-        logger.loggingDestinations(destinations)
         return logger
     }
     
