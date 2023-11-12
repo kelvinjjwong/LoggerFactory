@@ -22,18 +22,18 @@ if [[ $? -ne 0 ]]; then
 fi
 
 PODSPEC=`ls *.podspec | awk -F' ' '{print $1}' | head -1`
+PREV_VERSION=`grep s.version $PODSPEC | head -1 | awk -F' ' '{print $NF}' | sed 's/"//g'`
 
 if [[ $versionChange -ne 0 ]]; then
-    CURRENT_VERSION=`grep s.version $PODSPEC | head -1 | awk -F' ' '{print $NF}' | sed 's/"//g'`
     if [[ $versionChange -eq 1 ]]; then
-        NEW_VERSION=`echo $CURRENT_VERSION | awk -F'.' '{print $1"."$2"."$3+1}'`
+        NEW_VERSION=`echo $PREV_VERSION | awk -F'.' '{print $1"."$2"."$3+1}'`
     else
-        NEW_VERSION=`echo $CURRENT_VERSION | awk -F'.' '{print $1"."$2"."$3-1}'`
+        NEW_VERSION=`echo $PREV_VERSION | awk -F'.' '{print $1"."$2"."$3-1}'`
     fi
-    echo "Current version: $CURRENT_VERSION"
+    echo "Current version: $PREV_VERSION"
     echo "   Next version: $NEW_VERSION"
     sed -i .bak -e 's/s.version     = ".*"/s.version     = "'$NEW_VERSION'"/' $PODSPEC; rm -f $PODSPEC.bak
-    sed -i .bak -e 's/"'$CURRENT_VERSION'"/"'$NEW_VERSION'"/g' -e 's/~> '$CURRENT_VERSION'/~> '$NEW_VERSION'/g' README.md; rm -f README.md.bak
+    sed -i .bak -e 's/"'$PREV_VERSION'"/"'$NEW_VERSION'"/g' -e 's/~> '$PREV_VERSION'/~> '$NEW_VERSION'/g' README.md; rm -f README.md.bak
 fi
 
 GIT_BRANCH=`git status | grep "On branch" | head -1 | awk -F' ' '{print $NF}'`
@@ -58,6 +58,8 @@ if [[ $? -eq 0 ]]; then
     echo
     echo "1 # publish new release by tagging new version [$CURRENT_VERSION] in git repository"
     echo "$SOURCE_URL/releases"
+    echo "with auto markdown release note"
+    echo "**Full Changelog**: $SOURCE_URL/compare/$PREV_VERSION...$CURRENT_VERSION"
     echo ""
     echo "2 # push new version to Cocoapods trunk"
     echo "pod trunk push $PODSPEC"
