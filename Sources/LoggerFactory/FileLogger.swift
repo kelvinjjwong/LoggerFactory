@@ -9,6 +9,11 @@ import Foundation
 
 public class FileLogger : LogWriter {
     
+    public func id() -> String {
+        return "file"
+    }
+    
+    
     fileprivate var logFileUrl:URL
     
     public init(pathOfFolder: String) {

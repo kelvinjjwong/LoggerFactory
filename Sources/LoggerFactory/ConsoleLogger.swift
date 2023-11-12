@@ -9,6 +9,15 @@ import Foundation
 
 public class ConsoleLogger : LogWriter {
     
+    public static func id() -> String {
+        return "console"
+    }
+    
+    public func id() -> String {
+        return "console"
+    }
+    
+    
     public init() {
         
     }
