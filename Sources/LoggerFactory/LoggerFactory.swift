@@ -45,7 +45,7 @@ public protocol LogWriter {
 public class Logger {
     
     fileprivate var logMessageBuilder:LogMessageBuilder
-    private var displayTypes:[LogType] = [.info, .error, .todo, .warning] // .debug not included by default
+    fileprivate var displayTypes:[LogType] = [.info, .error, .todo, .warning] // .debug not included by default
     
     public init(category:String, subCategory:String, includeTypes:[LogType] = [], excludeTypes:[LogType] = []) {
         self.logMessageBuilder = LogMessageBuilder(category: category, subCategory: subCategory)
@@ -288,15 +288,39 @@ extension Logger : LoggerUser {
 public class LoggerFactory {
     
     fileprivate static var writers:[LogWriter] = []
+    fileprivate static var types:[LogType] = []
     
     public static func append(logWriter:LogWriter) {
         Self.writers.append(logWriter)
+    }
+    
+    public static func enable(_ types:[LogType]) {
+        if !types.isEmpty {
+            for t in types {
+                if let _ = self.types.firstIndex(of: t) {
+                    // continue
+                }else{
+                    self.types.append(t)
+                }
+            }
+        }
+    }
+    
+    public static func disable(_ types:[LogType]) {
+        if !types.isEmpty {
+            let defaultTypes:Set<LogType> = Set(self.types)
+            let removeTypes:Set<LogType> = Set(types)
+            self.types = Array(defaultTypes.subtracting(removeTypes))
+        }
     }
     
     public static func get(category:String, subCategory:String = "", includeTypes:[LogType] = [], excludeTypes:[LogType] = [], destinations:[String] = [ConsoleLogger.id()]) -> Logger {
         let logger = Logger(category: category, subCategory: subCategory, includeTypes: includeTypes, excludeTypes: excludeTypes)
         for writer in writers {
             let _ = logger.registerWriter(id: writer.id(), writer: writer)
+        }
+        if !self.types.isEmpty {
+            logger.displayTypes = self.types
         }
         return logger
     }
