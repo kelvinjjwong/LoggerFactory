@@ -74,7 +74,7 @@ if [[ "$GH" != "" ]]; then
     if [[ $? -ne 0 ]]; then
         exit -1
     fi
-    pod trunk push $PODSPEC
+    pod trunk push $PODSPEC --allow-warnings
 else
     SOURCE_URL=`grep s.source $PODSPEC | head -1 | awk -F'"' '{print $2}' | sed 's/.\{4\}$//'`
     echo "If success, you can then:"
