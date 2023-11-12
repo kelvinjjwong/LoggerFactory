@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name        = "LoggerFactory"
-  s.version     = "1.0.4"
+  s.version     = "1.0.5"
   s.summary     = "A library for logging in macOS platform."
   s.homepage    = "https://github.com/kelvinjjwong/LoggerFactory"
   s.license     = { :type => "MIT" }
