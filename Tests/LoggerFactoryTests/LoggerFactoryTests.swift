@@ -2,10 +2,19 @@ import XCTest
 @testable import LoggerFactory
 
 final class LoggerFactoryTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-//        XCTAssertEqual(LoggerFactory().text, "Hello, World!")
+    
+    
+    override func setUp() async throws {
+        print()
+        print("==== \(self.description) ====")
+        LoggerFactory.append(logWriter: ConsoleLogger())
+        LoggerFactory.append(logWriter: FileLogger(pathOfFolder: "~/logs"))
+    }
+    
+    func testMultipleLoggers() throws {
+        
+        let logger = LoggerFactory.get(category: "Test", subCategory: "UnitTest")
+            .registerWriter(id: "otherfile", writer: FileLogger(pathOfFolder: "~/logs", filename: "123.log"))
+        logger.log("this is a log")
     }
 }

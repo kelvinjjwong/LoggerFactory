@@ -21,6 +21,8 @@ if [[ $? -ne 0 ]]; then
   exit -1
 fi
 
+# JUMP VERSION
+
 PODSPEC=`ls *.podspec | awk -F' ' '{print $1}' | head -1`
 PREV_VERSION=`grep s.version $PODSPEC | head -1 | awk -F' ' '{print $NF}' | sed 's/"//g'`
 
@@ -35,6 +37,14 @@ if [[ $versionChange -ne 0 ]]; then
     sed -i .bak -e 's/s.version     = ".*"/s.version     = "'$NEW_VERSION'"/' $PODSPEC; rm -f $PODSPEC.bak
     sed -i .bak -e 's/"'$PREV_VERSION'"/"'$NEW_VERSION'"/g' -e 's/~> '$PREV_VERSION'/~> '$NEW_VERSION'/g' README.md; rm -f README.md.bak
 fi
+
+if [[ $versionChange -eq -1 ]]; then
+   echo "Aborted following build steps due to version downgrade."
+   echo
+   exit 0
+fi
+
+# PUSH CHANGES BEFORE POD TESTING
 
 GIT_BRANCH=`git status | grep "On branch" | head -1 | awk -F' ' '{print $NF}'`
 CURRENT_VERSION=`grep s.version $PODSPEC | head -1 | awk -F' ' '{print $NF}' | sed 's/"//g'`
@@ -51,10 +61,14 @@ if [[ $? -eq 0 ]]; then
     fi
 fi
 
+# POD TESTING
+
 pod spec lint $PODSPEC --allow-warnings
 if [[ $? -ne 0 ]]; then
     exit -1
 fi
+
+# RELEASE
 
 GH=`which gh`
 if [[ "$GH" != "" ]]; then
@@ -74,6 +88,7 @@ if [[ "$GH" != "" ]]; then
     if [[ $? -ne 0 ]]; then
         exit -1
     fi
+    
     pod trunk push $PODSPEC --allow-warnings
 else
     SOURCE_URL=`grep s.source $PODSPEC | head -1 | awk -F'"' '{print $2}' | sed 's/.\{4\}$//'`
