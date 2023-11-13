@@ -37,19 +37,6 @@ public enum LogType: String{
     case performance
 }
 
-public protocol LogWriter {
-    func id() -> String
-    func write(message: String)
-    func path() -> String
-    
-    func forCategories(_ categories:[String]) -> Self
-    func forSubCategories(_ subCategories:[String]) -> Self
-    func forKeywords(_ keywords:[String]) -> Self
-    func isCategoryAvailable(_ category:String) -> Bool
-    func isSubCategoryAvailable(_ subCategory:String) -> Bool
-    func isAnyKeywordMatched(_ message:String) -> Bool
-}
-
 public class Logger {
     
     fileprivate var logMessageBuilder:LogMessageBuilder

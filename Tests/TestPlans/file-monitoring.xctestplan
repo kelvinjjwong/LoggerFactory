@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "974F2C2B-F0F8-4909-AFC7-206249242657",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "LoggerFactoryTests"
+      ],
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "LoggerFactoryTests",
+        "name" : "LoggerFactoryTests"
+      }
+    }
+  ],
+  "version" : 1
+}

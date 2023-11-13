@@ -57,22 +57,4 @@ final class LoggerFactoryTests: XCTestCase {
         logger.log(.trace, "this is another keyword")
         logger.log(.error, "this is not a keyword")
     }
-    
-    func testMonitorFileSize() throws {
-        let logger = LoggerFactory.get(category: "Test", subCategory: "testMonitorFileSize")
-        let durationExpectation = expectation(description: "durationExpectation")
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (Timer) in
-            if let fileWriter = LoggerFactory.getWriter(id: "file"), let size = fileWriter.path().sizeOfFile() {
-                let bcf = ByteCountFormatter()
-                bcf.allowedUnits = [.useBytes]
-                bcf.countStyle = .file
-                let string = bcf.string(fromByteCount: size)
-                logger.log("\(string) - \(size)")
-            }
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: {
-            durationExpectation.fulfill()
-        })
-        waitForExpectations(timeout: 10 + 1, handler: nil)
-    }
 }

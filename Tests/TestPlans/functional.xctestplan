@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "30B4FB3A-2CA2-4711-B01F-02423F7A5B47",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "FileMonitoringTests"
+      ],
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "LoggerFactoryTests",
+        "name" : "LoggerFactoryTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  DirectoryGenerator.swift
 //  
 //
 //  Created by Kelvin Wong on 2023/11/13.

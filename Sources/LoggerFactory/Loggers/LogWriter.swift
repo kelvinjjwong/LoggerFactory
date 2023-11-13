@@ -1,38 +1,35 @@
 //
-//  File.swift
+//  LogWriter.swift
 //  
 //
-//  Created by kelvinwong on 2023/7/19.
+//  Created by Kelvin Wong on 2023/11/14.
 //
 
 import Foundation
 
-public class ConsoleLogger : LogWriter {
+public protocol LogWriter {
+    func id() -> String
+    func write(message: String)
+    func path() -> String
     
-    public static func id() -> String {
-        return "console"
-    }
+    func forCategories(_ categories:[String]) -> Self
+    func forSubCategories(_ subCategories:[String]) -> Self
+    func forKeywords(_ keywords:[String]) -> Self
+    func isCategoryAvailable(_ category:String) -> Bool
+    func isSubCategoryAvailable(_ subCategory:String) -> Bool
+    func isAnyKeywordMatched(_ message:String) -> Bool
+}
+
+public class LoggerBase {
     
-    public func id() -> String {
-        return "console"
-    }
-    
-    public func path() -> String {
-        return "console"
-    }
+    fileprivate var categories:[String] = []
+    fileprivate var subCategories:[String] = []
+    fileprivate var keywords:[String] = []
     
     
-    public init() {
-        
-    }
-    
-    public func write(message: String) {
-        print(message)
-    }
-    
-    private var categories:[String] = []
-    private var subCategories:[String] = []
-    private var keywords:[String] = []
+}
+
+extension LogWriter where Self: LoggerBase {
     
     public func forCategories(_ categories: [String]) -> Self {
         self.categories = categories
