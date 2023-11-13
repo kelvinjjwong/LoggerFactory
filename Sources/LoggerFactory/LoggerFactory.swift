@@ -40,6 +40,13 @@ public enum LogType: String{
 public protocol LogWriter {
     func id() -> String
     func write(message: String)
+    
+    func forCategories(_ categories:[String]) -> Self
+    func forSubCategories(_ subCategories:[String]) -> Self
+    func forKeywords(_ keywords:[String]) -> Self
+    func isCategoryAvailable(_ category:String) -> Bool
+    func isSubCategoryAvailable(_ subCategory:String) -> Bool
+    func isAnyKeywordMatched(_ message:String) -> Bool
 }
 
 public class Logger {
@@ -90,93 +97,74 @@ public class Logger {
         return self._writers
     }
     
+    private func write(_ msg:String) {
+        for writer in self.getWriters() {
+            if writer.isCategoryAvailable(self.logMessageBuilder.getCategory())
+                && writer.isSubCategoryAvailable(self.logMessageBuilder.getSubCategory())
+                && writer.isAnyKeywordMatched(msg) {
+                        
+                writer.write(message: msg)
+            }
+        }
+    }
+    
     public func timecost(_ message:String, fromDate:Date) {
         guard self.displayTypes.contains(.performance) else {return}
         let msg = self.logMessageBuilder.build(logType: .performance, message: "\(message) - time cost: \(Date().timeIntervalSince(fromDate)) seconds", error: nil)
-        let logWriters = self.getWriters()
-        for writer in logWriters {
-            writer.write(message: msg)
-        }
+        self.write(msg)
     }
     
     public func log(_ message:String) {
         guard self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        let logWriters = self.getWriters()
-        for writer in logWriters {
-            writer.write(message: msg)
-        }
+        self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:String) {
         guard self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        let logWriters = self.getWriters()
-        for logger in logWriters {
-            logger.write(message: msg)
-        }
+        self.write(msg)
     }
     
     public func log(_ message:Int) {
         guard self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        let logWriters = self.getWriters()
-        for writer in logWriters {
-            writer.write(message: msg)
-        }
+        self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:Int) {
         guard self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        let logWriters = self.getWriters()
-        for writer in logWriters {
-            writer.write(message: msg)
-        }
+        self.write(msg)
     }
     
     public func log(_ message:Double) {
         guard self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        let logWriters = self.getWriters()
-        for writer in logWriters {
-            writer.write(message: msg)
-        }
+        self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:Double) {
         guard self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        let logWriters = self.getWriters()
-        for logger in logWriters {
-            logger.write(message: msg)
-        }
+        self.write(msg)
     }
     
     public func log(_ message:Float) {
         guard self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        let logWriters = self.getWriters()
-        for writer in logWriters {
-            writer.write(message: msg)
-        }
+        self.write(msg)
     }
     public func log(_ logType:LogType, _ message:Float) {
         guard self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        let logWriters = self.getWriters()
-        for writer in logWriters {
-            writer.write(message: msg)
-        }
+        self.write(msg)
     }
     
     public func log(_ message:Any) {
         guard self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        let logWriters = self.getWriters()
-        for writer in logWriters {
-            writer.write(message: msg)
-        }
+        self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:Any) {
@@ -191,10 +179,7 @@ public class Logger {
     public func log(_ message:Error) {
         guard self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: message)
-        let logWriters = self.getWriters()
-        for writer in logWriters {
-            writer.write(message: msg)
-        }
+        self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:Error) {
@@ -209,19 +194,13 @@ public class Logger {
     public func log(_ message:String, _ error:Error) {
         guard self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: error)
-        let logWriters = self.getWriters()
-        for writer in logWriters {
-            writer.write(message: msg)
-        }
+        self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:String, _ error:Error) {
         guard self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: error)
-        let logWriters = self.getWriters()
-        for writer in logWriters {
-            writer.write(message: msg)
-        }
+        self.write(msg)
     }
 }
 

@@ -24,6 +24,14 @@ public class LogMessageBuilder : LogMessageBuilderInterface {
     private var category:String = ""
     private var subCategory:String = ""
     
+    public func getCategory() -> String {
+        return self.category
+    }
+    
+    public func getSubCategory() -> String {
+        return self.subCategory
+    }
+    
     public init(category:String, subCategory:String) {
         self.category = category
         self.subCategory = subCategory
