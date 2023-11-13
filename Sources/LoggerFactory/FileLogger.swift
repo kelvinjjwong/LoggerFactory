@@ -18,6 +18,14 @@ public class FileLogger : LogWriter {
         return "file"
     }
     
+    public func path() -> String {
+        if #available(macOS 13.0, *) {
+            return self.logFileUrl.path()
+        }else {
+            return self.logFileUrl.path
+        }
+    }
+    
     
     fileprivate var logFileUrl:URL
     

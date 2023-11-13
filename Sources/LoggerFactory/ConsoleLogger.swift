@@ -17,6 +17,10 @@ public class ConsoleLogger : LogWriter {
         return "console"
     }
     
+    public func path() -> String {
+        return "console"
+    }
+    
     
     public init() {
         

@@ -40,6 +40,7 @@ public enum LogType: String{
 public protocol LogWriter {
     func id() -> String
     func write(message: String)
+    func path() -> String
     
     func forCategories(_ categories:[String]) -> Self
     func forSubCategories(_ subCategories:[String]) -> Self
@@ -268,6 +269,10 @@ public class LoggerFactory {
     
     fileprivate static var writers:[String:LogWriter] = [:]
     fileprivate static var types:[LogType] = []
+    
+    public static func getWriter(id:String) -> LogWriter? {
+        return self.writers[id]
+    }
     
     public static func append(logWriter:LogWriter) {
         Self.writers[logWriter.id()] = logWriter

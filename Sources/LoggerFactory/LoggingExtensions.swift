@@ -26,6 +26,14 @@ extension String {
         return false
     }
     
+    func sizeOfFile() -> Int64? {
+        guard let attrs = try? FileManager.default.attributesOfItem(atPath: self) else {
+            return nil
+        }
+
+        return attrs[.size] as? Int64
+    }
+    
     func mkdirs(logger:Logger? = nil) -> (Bool, Error?) {
         do {
             try FileManager.default.createDirectory(atPath: self, withIntermediateDirectories: true, attributes: nil)
@@ -62,4 +70,7 @@ extension Data {
             try write(to: fileURL, options: .atomic)
         }
     }
+}
+
+extension FileManager {
 }
