@@ -23,12 +23,8 @@ final class FileMonitoringTests: XCTestCase {
         let logger = LoggerFactory.get(category: "Test", subCategory: "testMonitorFileSize")
         let durationExpectation = expectation(description: "durationExpectation")
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (Timer) in
-            if let fileWriter = LoggerFactory.getWriter(id: "file"), let size = fileWriter.path().sizeOfFile() {
-                let bcf = ByteCountFormatter()
-                bcf.allowedUnits = [.useBytes]
-                bcf.countStyle = .file
-                let string = bcf.string(fromByteCount: size)
-                logger.log("\(string) - \(size)")
+            if let fileWriter = LoggerFactory.getWriter(id: "file"), let size = fileWriter.file().sizeOfFile() {
+                logger.log("\(size.humanReadable(.useBytes)) - \(size)")
             }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: {

@@ -74,3 +74,13 @@ extension Data {
 
 extension FileManager {
 }
+
+extension Int64 {
+    
+    func humanReadable(_ unit:ByteCountFormatter.Units) -> String {
+        let bcf = ByteCountFormatter()
+        bcf.allowedUnits = [unit]
+        bcf.countStyle = .file
+        return bcf.string(fromByteCount: self)
+    }
+}

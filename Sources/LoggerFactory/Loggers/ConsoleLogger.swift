@@ -17,11 +17,6 @@ public class ConsoleLogger : LoggerBase, LogWriter {
         return "console"
     }
     
-    public func path() -> String {
-        return "console"
-    }
-    
-    
     public override init() {
         super.init()
     }

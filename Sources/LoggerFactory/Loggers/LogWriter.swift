@@ -10,7 +10,7 @@ import Foundation
 public protocol LogWriter {
     func id() -> String
     func write(message: String)
-    func path() -> String
+    func file() -> String
     
     func forCategories(_ categories:[String]) -> Self
     func forSubCategories(_ subCategories:[String]) -> Self
@@ -30,6 +30,10 @@ public class LoggerBase {
 }
 
 extension LogWriter where Self: LoggerBase {
+    
+    public func file() -> String {
+        return ""
+    }
     
     public func forCategories(_ categories: [String]) -> Self {
         self.categories = categories
