@@ -17,7 +17,8 @@
         "FileMonitoringSizeTests",
         "FileMonitoringTests",
         "FileMonitoringTimeTests",
-        "LoggerFactoryTests"
+        "LoggerFactoryTests",
+        "NotificationLoggerTests"
       ],
       "target" : {
         "containerPath" : "container:",

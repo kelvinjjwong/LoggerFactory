@@ -16,7 +16,9 @@
       "skippedTests" : [
         "FileMonitoringSizeTests",
         "FileMonitoringTests",
-        "LoggerFactoryTests"
+        "FileMonitoringTimeAndSizeTests",
+        "LoggerFactoryTests",
+        "NotificationLoggerTests"
       ],
       "target" : {
         "containerPath" : "container:",
