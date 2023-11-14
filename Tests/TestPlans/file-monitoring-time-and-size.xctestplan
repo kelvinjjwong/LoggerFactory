@@ -1,0 +1,30 @@
+{
+  "configurations" : [
+    {
+      "id" : "33A24C7B-A0B9-41BE-86F0-1574F4E867F6",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "FileMonitoringSizeTests",
+        "FileMonitoringTests",
+        "FileMonitoringTimeTests",
+        "LoggerFactoryTests"
+      ],
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "LoggerFactoryTests",
+        "name" : "LoggerFactoryTests"
+      }
+    }
+  ],
+  "version" : 1
+}

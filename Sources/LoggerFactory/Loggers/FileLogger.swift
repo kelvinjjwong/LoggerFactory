@@ -31,8 +31,7 @@ public class FileLogger : LoggerBase, LogWriter {
     fileprivate var logFileUrl:URL
     fileprivate var rollPolicy:FileRollPolicy
     
-    public init(pathOfFolder:String = Defaults.defaultLoggingDirectory(), filename:String = Defaults.defaultLoggingFilename(), roll:FileRollPolicy = FileRollPolicy()) {
-        self.rollPolicy = roll
+    public init(pathOfFolder:String = Defaults.defaultLoggingDirectory(), filename:String = Defaults.defaultLoggingFilename()) {
         let pathOfFolder = DirectoryGenerator.default.resolve(pathOfFolder).get()
         self.pathOfFolder = pathOfFolder
         self.filename = filename
@@ -41,16 +40,14 @@ public class FileLogger : LoggerBase, LogWriter {
         }else{
             self.logFileUrl = URL(fileURLWithPath: pathOfFolder).appendingPathComponent(filename)
         }
+        self.rollPolicy = FileRollPolicy.empty()
         super.init()
         self.write(message: "\(ISO8601DateFormatter().string(from: Date())) logger initialized.")
-        if self.rollPolicy.isAvailable() {
-            self.startMonitoring()
-        }
         print("\(LogType.iconOfType(LogType.info)) \(ISO8601DateFormatter().string(from: Date())) [FileLogge] Writing log to file: \(logFileUrl.path)")
     }
     
-    public func roll(atSize: Int = 0, unit: ByteCountFormatter.Units = .useBytes, atHour: Int = 0, atMinute:Int = 0, everyHour:Bool = false, everyMinute:Bool = false) -> Self {
-        self.rollPolicy = FileRollPolicy(atSize: atSize, unit: unit, atHour: atHour, atMinute: atMinute, everyHour: everyHour, everyMinute: everyMinute)
+    public func roll(atSize: Int = 0, unit: ByteCountFormatter.Units = .useBytes, atHour: Int = -1, atMinute:Int = -1, everyDay:Bool = false, everyHour:Bool = false, everyMinute:Bool = false) -> Self {
+        self.rollPolicy = FileRollPolicy(atSize: atSize, unit: unit, atHour: atHour, atMinute: atMinute, everyDay: everyDay, everyHour: everyHour, everyMinute: everyMinute)
         if self.rollPolicy.isAvailable() {
             self.startMonitoring()
         }
@@ -90,7 +87,6 @@ public class FileLogger : LoggerBase, LogWriter {
             
             Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (Timer) in
                 if !self.suspendedMonitoring {
-                    
                     var shouldRoll = false
                     if self.rollPolicy.atSize() > 0 {
                         if let size = self.file().sizeOfFile(), size.humanReadableValue(self.rollPolicy.sizeUnit()) >= self.rollPolicy.atSize() {
@@ -133,7 +129,14 @@ public class FileLogger : LoggerBase, LogWriter {
                     }
                     if shouldRoll {
                         self.suspendedMonitoring = true
-                        self.rollFile(tag: self.rollPolicy.atSize() > 0 ? .sequence : .date)
+                        var tags:[FileRollTag] = []
+                        if self.rollPolicy.atSize() > 0 {
+                            tags.append(.sequence)
+                        }
+                        if self.rollPolicy.everyDay() || self.rollPolicy.everyHour() || self.rollPolicy.everyMinute() || self.rollPolicy.atHour() >= 0 || self.rollPolicy.atMinute() >= 0 {
+                            tags.append(.date)
+                        }
+                        self.rollFile(tags: tags)
                         self.suspendedMonitoring = false
                     }
                 }
@@ -141,9 +144,35 @@ public class FileLogger : LoggerBase, LogWriter {
         }
     }
     
-    private func generateArchiveFilename(tag:FileRollTag = .sequence) -> String {
-        let majorPartOfFilename = self.filename.substring(from: 0, to: self.filename.count-4)
-        if tag == .sequence {
+    private func generateArchiveFilename(tags:[FileRollTag]) -> String {
+        var majorPartOfFilename = self.filename.substring(from: 0, to: self.filename.count-4)
+        
+        if tags.contains(.date) {
+            let prevTimeTag = self.lastTimeTag
+            
+            // generate next time tag
+            let now = Date()
+            var requireHour = 0
+            var requireMinute = 0
+            if self.rollPolicy.everyDay() { // 20231114.0000
+                requireHour = 0
+                requireMinute = 0
+            }
+            if self.rollPolicy.everyMinute() || self.rollPolicy.atMinute() >= 0 { // 20231114.0022
+                requireMinute = Calendar.current.component(.minute, from: now)
+            }
+            if self.rollPolicy.everyHour() || self.rollPolicy.atHour() >= 0 { // 20231114.1100 or 20231114.1122
+                requireHour = Calendar.current.component(.hour, from: now)
+            }
+            
+            let date = Calendar.current.date(bySettingHour: requireHour, minute: requireMinute, second: 0, of: Date())!
+            
+            let nextTimeTag = date.string(format: self.timeTagFormat)
+            majorPartOfFilename = "\(majorPartOfFilename).from_\(prevTimeTag)_to_\(nextTimeTag)"
+            self.lastTimeTag = nextTimeTag
+        }
+        
+        if tags.contains(.sequence) {
             var existArchives = -1
             do {
                 let items = try FileManager.default.contentsOfDirectory(atPath: self.pathOfFolder)
@@ -159,19 +188,17 @@ public class FileLogger : LoggerBase, LogWriter {
                 return ""
             }
             return "\(majorPartOfFilename).\(existArchives+1).log"
-        }else if tag == .date {
-            let prevTimeTag = self.lastTimeTag
-            let nextTimeTag = Date().string(format: self.timeTagFormat)
-            let filename = "\(majorPartOfFilename).from_\(prevTimeTag)_to_\(nextTimeTag).log"
-            self.lastTimeTag = nextTimeTag
-            return filename
+        }
+        
+        if tags.contains(.date) {
+            return "\(majorPartOfFilename).log"
         }else{
             return "\(majorPartOfFilename).rolled.log"
         }
     }
     
-    public func rollFile(tag:FileRollTag = .sequence) {
-        let archiveFilename = self.generateArchiveFilename(tag: tag)
+    public func rollFile(tags:[FileRollTag]) {
+        let archiveFilename = self.generateArchiveFilename(tags: tags)
         guard archiveFilename != "" else {return}
         
         var fromPath = ""
@@ -205,28 +232,52 @@ public enum FileRollTag {
 
 public class FileRollPolicy {
     
+    private var null = true
+    
     private var rollAtSize: Int = 0
     private var rollAtSizeUnit: ByteCountFormatter.Units = .useBytes
     private var rollAtHour: Int = 0
     private var rollAtMinute: Int = 0
+    private var rollEveryDay: Bool = false
     private var rollEveryHour: Bool = false
     private var rollEveryMinute: Bool = false
     
-    public init(atSize: Int = 0, unit: ByteCountFormatter.Units = .useBytes, atHour: Int = -1, atMinute:Int = 0, everyHour:Bool = false, everyMinute:Bool = false) {
+    private init() {
+        self.null = true
+    }
+    
+    public static func empty() -> FileRollPolicy {
+        return FileRollPolicy()
+    }
+    
+    public init(atSize: Int = 0, unit: ByteCountFormatter.Units = .useBytes, atHour: Int = -1, atMinute:Int = -1, everyDay:Bool = false, everyHour:Bool = false, everyMinute:Bool = false) {
+        self.null = false
+        
         self.rollAtSize = atSize
         self.rollAtSizeUnit = unit
+        
+        self.rollEveryDay = everyDay
+        if everyDay {
+            self.rollAtHour = 0
+            self.rollAtMinute = 0
+        }
+        self.rollEveryHour = everyHour
+        if everyHour {
+            self.rollAtMinute = 0
+        }
+        self.rollEveryMinute = everyMinute
+        
         self.rollAtHour = atHour
         self.rollAtMinute = atMinute
-        self.rollEveryHour = everyHour
-        self.rollEveryMinute = everyMinute
     }
     
     public func isAvailable() -> Bool {
+        guard !self.null else {return false}
+        
         return self.rollAtSize > 0
-        || (
+        || (self.rollEveryDay || self.rollEveryHour || self.rollEveryMinute ||
             (self.rollAtHour >= 0 && self.rollAtHour <= 24)
             || (self.rollAtMinute >= 0 && self.rollAtMinute <= 59)
-            
         )
     }
     
@@ -246,11 +297,21 @@ public class FileRollPolicy {
         return self.rollAtMinute
     }
     
+    public func everyDay() -> Bool {
+        return self.rollEveryDay
+    }
+    
     public func everyHour() -> Bool {
         return self.rollEveryHour
     }
     
     public func everyMinute() -> Bool {
         return self.rollEveryMinute
+    }
+    
+    public func toString() -> String {
+        return """
+FileRollPolicy: {empty: \(null), atSize: \(atSize()), unit: \(sizeUnit()), everyDay:\(everyDay()), everyHour:\(everyHour()), everyMinute:\(everyMinute()), atHour:\(atHour()), atMinute:\(atMinute())}
+"""
     }
 }

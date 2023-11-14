@@ -51,6 +51,9 @@
          <TestPlanReference
             reference = "container:Tests/TestPlans/file-monitoring-size.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Tests/TestPlans/file-monitoring-time-and-size.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference
