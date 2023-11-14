@@ -72,7 +72,13 @@ extension Data {
     }
 }
 
-extension FileManager {
+extension Date {
+    
+    func string(format:String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: self)
+    }
 }
 
 extension Int64 {

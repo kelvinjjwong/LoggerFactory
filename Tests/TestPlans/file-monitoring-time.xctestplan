@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "974F2C2B-F0F8-4909-AFC7-206249242657",
+      "id" : "B7956693-BFD6-4930-B36E-72A3FEE52412",
       "name" : "Configuration 1",
       "options" : {
 
@@ -14,6 +14,8 @@
   "testTargets" : [
     {
       "skippedTests" : [
+        "FileMonitoringSizeTests",
+        "FileMonitoringTests",
         "LoggerFactoryTests"
       ],
       "target" : {

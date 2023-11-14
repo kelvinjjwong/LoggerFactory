@@ -43,10 +43,13 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests/TestPlans/file-monitoring.xctestplan">
+            reference = "container:Tests/TestPlans/functional.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Tests/TestPlans/functional.xctestplan">
+            reference = "container:Tests/TestPlans/file-monitoring-time.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Tests/TestPlans/file-monitoring-size.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
@@ -59,11 +62,6 @@
                BlueprintName = "LoggerFactoryTests"
                ReferencedContainer = "container:">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "FileMonitoringTests">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

@@ -1,22 +1,22 @@
 {
   "configurations" : [
     {
-      "id" : "30B4FB3A-2CA2-4711-B01F-02423F7A5B47",
-      "name" : "Test Scheme Action",
+      "id" : "974F2C2B-F0F8-4909-AFC7-206249242657",
+      "name" : "Configuration 1",
       "options" : {
 
       }
     }
   ],
   "defaultOptions" : {
-
+    "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {
       "skippedTests" : [
-        "FileMonitoringSizeTests",
         "FileMonitoringTests",
-        "FileMonitoringTimeTests"
+        "FileMonitoringTimeTests",
+        "LoggerFactoryTests"
       ],
       "target" : {
         "containerPath" : "container:",

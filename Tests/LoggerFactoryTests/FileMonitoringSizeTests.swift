@@ -8,7 +8,7 @@
 import XCTest
 @testable import LoggerFactory
 
-final class FileMonitoringTests: XCTestCase {
+final class FileMonitoringSizeTests: XCTestCase {
     
     override func setUp() async throws {
         print()
