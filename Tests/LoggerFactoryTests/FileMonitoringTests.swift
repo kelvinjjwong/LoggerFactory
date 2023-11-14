@@ -14,22 +14,21 @@ final class FileMonitoringTests: XCTestCase {
         print()
         print("==== \(self.description) ====")
         LoggerFactory.append(logWriter: ConsoleLogger())
-        LoggerFactory.append(logWriter: FileLogger(pathOfFolder: "~/logs"))
         LoggerFactory.enable([.info, .error, .warning, .trace])
-        
     }
     
     func testMonitorFileSize() throws {
+        LoggerFactory.append(logWriter: FileLogger(pathOfFolder: "~/logs").roll(atSize: 2, unit: .useKB))
         let logger = LoggerFactory.get(category: "Test", subCategory: "testMonitorFileSize")
         let durationExpectation = expectation(description: "durationExpectation")
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (Timer) in
             if let fileWriter = LoggerFactory.getWriter(id: "file"), let size = fileWriter.file().sizeOfFile() {
-                logger.log("\(size.humanReadable(.useBytes)) - \(size)")
+                logger.log("simulate appending log content - \(size.humanReadableValue(.useKB)) - \(size.humanReadableValue(.useBytes)) - \(size)")
             }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 60, execute: {
             durationExpectation.fulfill()
         })
-        waitForExpectations(timeout: 10 + 1, handler: nil)
+        waitForExpectations(timeout: 60 + 1, handler: nil)
     }
 }

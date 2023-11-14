@@ -83,4 +83,12 @@ extension Int64 {
         bcf.countStyle = .file
         return bcf.string(fromByteCount: self)
     }
+    
+    func humanReadableValue(_ unit:ByteCountFormatter.Units) -> Int {
+        let bcf = ByteCountFormatter()
+        bcf.allowedUnits = [unit]
+        bcf.countStyle = .binary
+        bcf.includesUnit = false
+        return Int(bcf.string(fromByteCount: self).replacingOccurrences(of: ",", with: "")) ?? 0
+    }
 }
