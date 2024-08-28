@@ -97,66 +97,66 @@ public class Logger {
     }
     
     public func timecost(_ message:String, fromDate:Date) {
-        guard self.displayTypes.contains(.performance) else {return}
+        guard LoggerFactory.isEnabled(type: .performance) || self.displayTypes.contains(.performance) else {return}
         let msg = self.logMessageBuilder.build(logType: .performance, message: "\(message) - time cost: \(Date().timeIntervalSince(fromDate)) seconds", error: nil)
         self.write(msg)
     }
     
     public func log(_ message:String) {
-        guard self.displayTypes.contains(.info) else {return}
+        guard LoggerFactory.isEnabled(type: .info) || self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
         self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:String) {
-        guard self.displayTypes.contains(logType) else {return}
+        guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         self.write(msg)
     }
     
     public func log(_ message:Int) {
-        guard self.displayTypes.contains(.info) else {return}
+        guard LoggerFactory.isEnabled(type: .info) || self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
         self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:Int) {
-        guard self.displayTypes.contains(logType) else {return}
+        guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         self.write(msg)
     }
     
     public func log(_ message:Double) {
-        guard self.displayTypes.contains(.info) else {return}
+        guard LoggerFactory.isEnabled(type: .info) || self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
         self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:Double) {
-        guard self.displayTypes.contains(logType) else {return}
+        guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         self.write(msg)
     }
     
     public func log(_ message:Float) {
-        guard self.displayTypes.contains(.info) else {return}
+        guard LoggerFactory.isEnabled(type: .info) || self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
         self.write(msg)
     }
     public func log(_ logType:LogType, _ message:Float) {
-        guard self.displayTypes.contains(logType) else {return}
+        guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         self.write(msg)
     }
     
     public func log(_ message:Any) {
-        guard self.displayTypes.contains(.info) else {return}
+        guard LoggerFactory.isEnabled(type: .info) || self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
         self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:Any) {
-        guard self.displayTypes.contains(logType) else {return}
+        guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         let logWriters = self.getWriters()
         for logger in logWriters {
@@ -165,13 +165,13 @@ public class Logger {
     }
     
     public func log(_ message:Error) {
-        guard self.displayTypes.contains(.info) else {return}
+        guard LoggerFactory.isEnabled(type: .info) || self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: message)
         self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:Error) {
-        guard self.displayTypes.contains(logType) else {return}
+        guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         let logWriters = self.getWriters()
         for writer in logWriters {
@@ -180,13 +180,13 @@ public class Logger {
     }
     
     public func log(_ message:String, _ error:Error) {
-        guard self.displayTypes.contains(.info) else {return}
+        guard LoggerFactory.isEnabled(type: .info) || self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: error)
         self.write(msg)
     }
     
     public func log(_ logType:LogType, _ message:String, _ error:Error) {
-        guard self.displayTypes.contains(logType) else {return}
+        guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: error)
         self.write(msg)
     }
@@ -256,6 +256,37 @@ public class LoggerFactory {
     
     fileprivate static var writers:[String:LogWriter] = [:]
     fileprivate static var types:[LogType] = []
+    fileprivate static var categoryTypes:[String:[LogType]] = [:]
+    
+    public static func isEnabled(type:LogType) -> Bool {
+        return types.contains(type)
+    }
+    
+    public static func isEnabled(category:String, type:LogType) -> Bool {
+        if !isEnabled(type: type) {
+            let key = "\(category)##"
+            if let types = categoryTypes[key] {
+                return types.contains(type)
+            }else{
+                return false
+            }
+        }else{
+            return true
+        }
+    }
+    
+    public static func isEnabled(category:String, subCategory:String, type:LogType) -> Bool {
+        if !isEnabled(category: category, type: type) {
+            let key = "\(category)##\(subCategory)"
+            if let types = categoryTypes[key] {
+                return types.contains(type)
+            }else{
+                return false
+            }
+        }else{
+            return true
+        }
+    }
     
     public static func getWriter(id:String) -> LogWriter? {
         return self.writers[id]
@@ -287,6 +318,16 @@ public class LoggerFactory {
             let removeTypes:Set<LogType> = Set(types)
             self.types = Array(defaultTypes.subtracting(removeTypes))
         }
+    }
+    
+    public static func enable(category:String, types:[LogType]) {
+        let key = "\(category)##"
+        categoryTypes[key] = types
+    }
+    
+    public static func enable(category:String, subCategory:String, types:[LogType]) {
+        let key = "\(category)##\(subCategory)"
+        categoryTypes[key] = types
     }
     
     public static func get(category:String, subCategory:String = "", includeTypes:[LogType] = [], excludeTypes:[LogType] = [], destinations:[String] = [ConsoleLogger.id()]) -> Logger {
