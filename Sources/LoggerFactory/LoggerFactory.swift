@@ -16,7 +16,7 @@ public enum LogType: String{
         case LogType.warning:
             return "📙"
         case LogType.debug:
-            return "📓"
+            return "👻"
         case LogType.todo:
             return "⚠️"
         case LogType.trace:
@@ -85,10 +85,13 @@ public class Logger {
         return self._writers
     }
     
-    private func write(_ msg:String) {
+    private func write(_ msg:String, type:LogType = .info) {
         for writer in self.getWriters() {
+//            print("\(writer.id()) -> cat:\(self.logMessageBuilder.getCategory()) type:\(type) -> \(LoggerFactory.isEnabled(category: self.logMessageBuilder.getCategory(), type: type))")
             if writer.isCategoryAvailable(self.logMessageBuilder.getCategory())
                 && writer.isSubCategoryAvailable(self.logMessageBuilder.getSubCategory())
+                && LoggerFactory.isEnabled(category: self.logMessageBuilder.getCategory(), type: type)
+                && LoggerFactory.isEnabled(category: self.logMessageBuilder.getCategory(), subCategory: self.logMessageBuilder.getSubCategory(), type: type)
                 && writer.isAnyKeywordMatched(msg) {
                         
                 writer.write(message: msg)
@@ -111,19 +114,19 @@ public class Logger {
     public func log(_ logType:LogType, _ message:String) {
         guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        self.write(msg)
+        self.write(msg, type: logType)
     }
     
     public func log(_ message:Int) {
         guard LoggerFactory.isEnabled(type: .info) || self.displayTypes.contains(.info) else {return}
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        self.write(msg)
+        self.write(msg, type: .info)
     }
     
     public func log(_ logType:LogType, _ message:Int) {
         guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        self.write(msg)
+        self.write(msg, type: logType)
     }
     
     public func log(_ message:Double) {
@@ -135,7 +138,7 @@ public class Logger {
     public func log(_ logType:LogType, _ message:Double) {
         guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        self.write(msg)
+        self.write(msg, type: logType)
     }
     
     public func log(_ message:Float) {
@@ -146,7 +149,7 @@ public class Logger {
     public func log(_ logType:LogType, _ message:Float) {
         guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        self.write(msg)
+        self.write(msg, type: logType)
     }
     
     public func log(_ message:Any) {
@@ -188,7 +191,7 @@ public class Logger {
     public func log(_ logType:LogType, _ message:String, _ error:Error) {
         guard LoggerFactory.isEnabled(type: logType) || self.displayTypes.contains(logType) else {return}
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: error)
-        self.write(msg)
+        self.write(msg, type: logType)
     }
 }
 
@@ -263,28 +266,29 @@ public class LoggerFactory {
     }
     
     public static func isEnabled(category:String, type:LogType) -> Bool {
-        if !isEnabled(type: type) {
+        if isEnabled(type: type) { // is enabled globally
             let key = "\(category)##"
             if let types = categoryTypes[key] {
                 return types.contains(type)
-            }else{
-                return false
+            }else{ // not defined means allowed
+                return true
             }
         }else{
-            return true
+            
+            return false
         }
     }
     
     public static func isEnabled(category:String, subCategory:String, type:LogType) -> Bool {
-        if !isEnabled(category: category, type: type) {
+        if isEnabled(category: category, type: type) { // is enabled globally && is enabled parent category
             let key = "\(category)##\(subCategory)"
             if let types = categoryTypes[key] {
                 return types.contains(type)
-            }else{
-                return false
+            }else{ // not defined means allowed
+                return true
             }
         }else{
-            return true
+            return false
         }
     }
     
