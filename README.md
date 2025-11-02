@@ -14,7 +14,7 @@ Built with ![swift](https://img.shields.io/badge/Swift-5-blue) ![xcode](https://
 Specify dependency in `Package.swift` by adding this:
 
 ```swift
-.package(url: "https://github.com/kelvinjjwong/LoggerFactory.git", .upToNextMajor(from: "1.1.4"))
+.package(url: "https://github.com/kelvinjjwong/LoggerFactory.git", .upToNextMajor(from: "1.1.5"))
 ```
 
 Then run `swift build` to download and integrate the package.
@@ -24,7 +24,7 @@ Then run `swift build` to download and integrate the package.
 Use [CocoaPods](http://cocoapods.org/) to install `LoggerFactory` by adding it to `Podfile`:
 
 ```ruby
-pod 'LoggerFactory', '~> 1.1.4'
+pod 'LoggerFactory', '~> 1.1.5'
 ```
 
 Then run `pod install` to download and integrate the package.
