@@ -9,12 +9,10 @@ import Foundation
 
 public class ConsoleLogger : LoggerBase, LogWriter {
     
-    public static func id() -> String {
-        return "console"
-    }
+    private var _id = "console"
     
     public func id() -> String {
-        return "console"
+        return self._id
     }
     
     public override init() {

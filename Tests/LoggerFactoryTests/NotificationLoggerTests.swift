@@ -15,7 +15,7 @@ final class NSNotificationLoggerTests: XCTestCase, NSUserNotificationCenterDeleg
         print("==== \(self.description) ====")
         LoggerFactory.append(logWriter: ConsoleLogger())
         LoggerFactory.append(logWriter: FileLogger(pathOfFolder: "~/logs"))
-        LoggerFactory.append(id: "logForKeywords", logWriter: FileLogger(pathOfFolder: "~/logs", filename: "123_for_keywords.log")
+        LoggerFactory.append(logWriter: FileLogger(id: "logForKeywords", pathOfFolder: "~/logs", filename: "123_for_keywords.log")
             .forKeywords(["keyword"])
         )
         LoggerFactory.enable([.info, .error, .warning, .trace])

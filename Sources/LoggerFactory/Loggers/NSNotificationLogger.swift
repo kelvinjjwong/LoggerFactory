@@ -9,12 +9,10 @@ import Foundation
 
 public class NSNotificationLogger : LoggerBase, LogWriter {
     
-    public static func id() -> String {
-        return "notification"
-    }
+    private var _id = "notification"
     
     public func id() -> String {
-        return "notification"
+        return self._id
     }
     
     private var key = ""

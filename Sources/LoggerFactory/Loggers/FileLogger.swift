@@ -9,13 +9,10 @@ import Foundation
 
 public class FileLogger : LoggerBase, LogWriter {
     
-    
-    public static func id() -> String {
-        return "file"
-    }
+    private var _id = "file"
     
     public func id() -> String {
-        return "file"
+        return self._id
     }
     
     public func file() -> String {
@@ -31,7 +28,8 @@ public class FileLogger : LoggerBase, LogWriter {
     fileprivate var logFileUrl:URL
     fileprivate var rollPolicy:FileRollPolicy
     
-    public init(pathOfFolder:String = Defaults.defaultLoggingDirectory(), filename:String = Defaults.defaultLoggingFilename()) {
+    public init(id:String = "file", pathOfFolder:String = Defaults.defaultLoggingDirectory(), filename:String = Defaults.defaultLoggingFilename()) {
+        self._id = id
         let pathOfFolder = DirectoryGenerator.default.resolve(pathOfFolder).get()
         self.pathOfFolder = pathOfFolder
         self.filename = filename
@@ -42,8 +40,8 @@ public class FileLogger : LoggerBase, LogWriter {
         }
         self.rollPolicy = FileRollPolicy.empty()
         super.init()
-        self.write(message: "\(ISO8601DateFormatter().string(from: Date())) logger initialized.")
-        print("\(LogType.iconOfType(LogType.info)) \(ISO8601DateFormatter().string(from: Date())) [FileLogge] Writing log to file: \(logFileUrl.path)")
+        self.write(message: "\(ISO8601DateFormatter().string(from: Date())) logger id \(self._id) initialized.")
+        print("\(LogType.iconOfType(LogType.info)) \(ISO8601DateFormatter().string(from: Date())) [FileLogger][\(self._id)] Writing log to file: \(logFileUrl.path)")
     }
     
     public func roll(atSize: Int = 0, unit: ByteCountFormatter.Units = .useBytes, atHour: Int = -1, atMinute:Int = -1, everyDay:Bool = false, everyHour:Bool = false, everyMinute:Bool = false) -> Self {
@@ -60,7 +58,7 @@ public class FileLogger : LoggerBase, LogWriter {
             do {
                 try message.appendLineToURL(fileURL: self.logFileUrl)
             }catch {
-                let msg = "\(LogType.iconOfType(LogType.error)) \(ISO8601DateFormatter().string(from: Date())) Unable to write log to file \(self.logFileUrl.path) - \(error)"
+                let msg = "\(LogType.iconOfType(LogType.error)) \(ISO8601DateFormatter().string(from: Date())) [FileLogger][\(self._id)] Unable to write log to file \(self.logFileUrl.path) - \(error)"
                 print(msg)
             }
         }
@@ -182,7 +180,7 @@ public class FileLogger : LoggerBase, LogWriter {
                     }
                 }
             }catch{
-                let msg = "\(LogType.iconOfType(LogType.error)) \(ISO8601DateFormatter().string(from: Date())) [FileLogger][roll] Unable to list log files in \(self.pathOfFolder) - \(error)"
+                let msg = "\(LogType.iconOfType(LogType.error)) \(ISO8601DateFormatter().string(from: Date())) [FileLogger][\(self._id)][roll] Unable to list log files in \(self.pathOfFolder) - \(error)"
                 self.write(message: msg)
                 print(msg)
                 return ""
@@ -214,10 +212,10 @@ public class FileLogger : LoggerBase, LogWriter {
             }
             
             try FileManager.default.moveItem(atPath: fromPath, toPath: toPath)
-            try "\(ISO8601DateFormatter().string(from: Date())) continue from previous file \(archiveFilename).\n".write(to: self.logFileUrl, atomically: false, encoding: .utf8)
+            try "\(ISO8601DateFormatter().string(from: Date())) [FileLogger][\(self._id)][roll] continue from previous file \(archiveFilename).\n".write(to: self.logFileUrl, atomically: false, encoding: .utf8)
         }catch{
             
-            let msg = "\(LogType.iconOfType(LogType.error)) \(ISO8601DateFormatter().string(from: Date())) [FileLogger][roll] Unable to archive log file \(fromPath) - \(error)"
+            let msg = "\(LogType.iconOfType(LogType.error)) \(ISO8601DateFormatter().string(from: Date())) [FileLogger][\(self._id)][roll] Unable to archive log file \(fromPath) - \(error)"
             self.write(message: msg)
             print(msg)
             return

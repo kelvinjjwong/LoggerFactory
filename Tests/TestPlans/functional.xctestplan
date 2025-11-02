@@ -18,6 +18,8 @@
         "FileMonitoringTests",
         "FileMonitoringTimeAndSizeTests",
         "FileMonitoringTimeTests",
+        "NSNotificationLoggerTests",
+        "NSNotificationLoggerTests\/testForKeywords()",
         "NotificationLoggerTests"
       ],
       "target" : {
