@@ -268,8 +268,9 @@ public class LoggerFactory {
     public static func isEnabled(category:String, type:LogType) -> Bool {
         if isEnabled(type: type) { // is enabled globally
             let key = "\(category)##"
+            print(">>> logtype << \(types):\(key)")
+            print(">>> logger <<< \(type):\(key) is \(types.contains(type))")
             if let types = categoryTypes[key] {
-                print(">>> logger <<< \(category)## is \(types.contains(type))")
                 return types.contains(type)
             }else{ // not defined means allowed
                 return true
@@ -283,7 +284,7 @@ public class LoggerFactory {
     public static func isEnabled(category:String, subCategory:String, type:LogType) -> Bool {
         if isEnabled(category: category, type: type) { // is enabled globally && is enabled parent category
             let key = "\(category)##\(subCategory)"
-            print(">>> logger <<< \(category)##\(subCategory) is \(types.contains(type))")
+            print(">>> logger <<< \(type):\(category)##\(subCategory) is \(types.contains(type))")
             if let types = categoryTypes[key] {
                 return types.contains(type)
             }else{ // not defined means allowed
