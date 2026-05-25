@@ -19,16 +19,6 @@ Specify dependency in `Package.swift` by adding this:
 
 Then run `swift build` to download and integrate the package.
 
-#### CocoaPods
-
-Use [CocoaPods](http://cocoapods.org/) to install `LoggerFactory` by adding it to `Podfile`:
-
-```ruby
-pod 'LoggerFactory', '~> 1.2.0'
-```
-
-Then run `pod install` to download and integrate the package.
-
 ## Usage
 
 #### Initialialization

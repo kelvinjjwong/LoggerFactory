@@ -58,6 +58,9 @@
          <TestPlanReference
             reference = "container:Tests/TestPlans/notification-logger.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Tests/TestPlans/logger-settings.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference

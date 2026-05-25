@@ -1,13 +1,4 @@
 #!/bin/bash
-#Version:1.0.7
-SCRIPT_VERSION=`grep "Version:" $0 | head -1 | awk -F':' '{print $NF}'`
-echo "Current SPA VERSION: $SCRIPT_VERSION"
-echo 
-if [[ "$1" = "" ]] || [[ "$1" = "help" ]] || [[ "$1" = "--help" ]]  || [[ "$1" = "--?" ]]; then   
-   echo "Sample:"
-   echo "$0"
-   echo
-   echo "$0 init"
    echo "$0 test"
    echo "$0 release [major|minor|revision] [not-publish]"
    echo
@@ -54,23 +45,6 @@ if [[ "`which xcodebuild`" == "" ]] || [[ "`which xcode-select`" == "" ]]; then
     echo "Xcode is required but has not properly installed."
     echo "https://apps.apple.com/us/app/xcode/id497799835?mt=12"
     exit 1;
-fi
-
-if [[ "`which pod`" == "" ]]; then
-    echo "Cocoapods is required but has not properly installed."
-    echo "https://cocoapods.org"
-    exit 1;
-else
-    echo "Cocoapods `pod --version`"
-fi
-
-pod trunk me
-if [[ $? -ne 0 ]]; then
-  echo "Please register like below before retry: "
-  echo
-  echo "pod trunk register `defaults read MobileMeAccounts Accounts | grep AccountID | awk -F'\"' '{print $2}'` '`whoami`' --description='`hostname -s`'"
-  echo
-  exit -1
 fi
 
 GIT_USER="`grep 'user:' ~/.config/gh/hosts.yml | awk -F': ' '{print $NF}'`"
@@ -123,18 +97,6 @@ fi
 if [[ ! -e .gitignore ]] || [[ `stat -f "%z" .gitignore` -eq 0 ]]; then
     curl -fsSL https://raw.githubusercontent.com/kelvinjjwong/spa/main/template/.gitignore > .gitignore
     echo "Completed create .gitignore"
-fi
-
-if [[ ! -e ${GIT_REPOSITORY}.podspec ]] || [[ `stat -f "%z" ${GIT_REPOSITORY}.podspec` -eq 0 ]]; then
-    curl -fsSL https://raw.githubusercontent.com/kelvinjjwong/spa/main/template/podspec > ${GIT_REPOSITORY}.podspec
-    sed -i '' -e "s/PROJECT_NAME/${GIT_REPOSITORY}/" ${GIT_REPOSITORY}.podspec
-    sed -i '' -e "s/PROJECT_VERSION/1.0.0/" ${GIT_REPOSITORY}.podspec
-    sed -i '' -e "s/GIT_USER/${GIT_USER}/" ${GIT_REPOSITORY}.podspec
-    sed -i '' -e "s/GIT_EMAIL/`git config user.email`/" ${GIT_REPOSITORY}.podspec
-    MACOS_VERSION=`sw_vers | grep ProductVersion | awk -F' ' '{print $NF}' | awk -F'.' '{print $1".0"}'`
-    sed -i '' -e "s/MACOS_VERSION/${MACOS_VERSION}/" ${GIT_REPOSITORY}.podspec
-    sed -i '' -e "s/SWIFT_VERSION/5.0/" ${GIT_REPOSITORY}.podspec
-    echo "Completed create ${GIT_REPOSITORY}.podspec"
 fi
 
 if [[ ! -e Package.swift ]] || [[ `stat -f "%z" Package.swift` -eq 0 ]]; then
@@ -223,8 +185,7 @@ fi
 
 # JUMP VERSION
 
-PODSPEC="${GIT_REPOSITORY}.podspec"
-PREV_VERSION=`grep s.version $PODSPEC | head -1 | awk -F' ' '{print $NF}' | sed 's/"//g'`
+PREV_VERSION=`grep upToNextMajor README.md | head -1 | awk -F'"' '{print $(NF-1)}'`
 
 if [[ $versionChange -ne 0 ]]; then
     if [[ $versionChange -eq 1 ]]; then
@@ -247,14 +208,13 @@ if [[ $versionChange -ne 0 ]]; then
     fi
     echo "Current version: $PREV_VERSION"
     echo "   Next version: $NEW_VERSION"
-    sed -i '' -e 's/s.version     = ".*"/s.version     = "'$NEW_VERSION'"/' $PODSPEC
     sed -i '' -e 's/"'$PREV_VERSION'"/"'$NEW_VERSION'"/g' -e 's/~> '$PREV_VERSION'/~> '$NEW_VERSION'/g' README.md
 fi
 
-# PUSH CHANGES BEFORE POD TESTING
+# PUSH CHANGES
 
 GIT_BRANCH=`git status | grep "On branch" | head -1 | awk -F' ' '{print $NF}'`
-CURRENT_VERSION=`grep s.version $PODSPEC | head -1 | awk -F' ' '{print $NF}' | sed 's/"//g'`
+CURRENT_VERSION=`grep upToNextMajor README.md | head -1 | awk -F'"' '{print $(NF-1)}'`
 
 GIT_REMOTE_REPO=`git config --get remote.origin.url`
 if [ "$GIT_REMOTE_REPO" = "" ]; then
@@ -284,12 +244,8 @@ git commit -am "build version $CURRENT_VERSION"
     fi
 #fi
 
-# POD TESTING
+# TESTING
 
-pod spec lint $PODSPEC --allow-warnings
-if [[ $? -ne 0 ]]; then
-    exit -1
-fi
 
 if [[ $IS_TEST -ne 0 ]]; then
     echo
@@ -328,5 +284,3 @@ if [[ "$2" = "not-publish" ]] || [[ "$3" = "not-publish" ]]; then
     exit 0
 fi
 
-pod trunk push $PODSPEC --allow-warnings
-echo "Completed publish to Cocoapods trunk."

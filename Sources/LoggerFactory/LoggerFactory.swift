@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum LogType: String{
+public enum LogType: String, Codable {
     
     public static func iconOfType(_ logType:LogType) -> String {
         switch logType {

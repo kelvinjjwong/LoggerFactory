@@ -1,0 +1,35 @@
+{
+  "configurations" : [
+    {
+      "id" : "1B9F8DF7-BB53-4DB3-B848-897A4F06F9DF",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "FileMonitoringSizeTests",
+        "FileMonitoringSizeTests\/testMonitorFileSize()",
+        "FileMonitoringTimeAndSizeTests",
+        "FileMonitoringTimeAndSizeTests\/testMonitorFileTimeAndSize()",
+        "FileMonitoringTimeTests",
+        "FileMonitoringTimeTests\/testMonitorFileTime()",
+        "LoggerFactoryTests",
+        "NSNotificationLoggerTests",
+        "NSNotificationLoggerTests\/testForKeywords()"
+      ],
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "LoggerFactoryTests",
+        "name" : "LoggerFactoryTests"
+      }
+    }
+  ],
+  "version" : 1
+}
