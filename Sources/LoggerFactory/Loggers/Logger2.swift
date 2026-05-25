@@ -9,8 +9,12 @@ import Cocoa
 
 public protocol LogWriter2 {
     func id() -> String
-    func write(message: String)
+    func write(message: String) async
     func file() -> String
+    
+    func getForLogType() -> [LogType]
+    func getForCategory() -> String
+    func getForSubCategory() -> String
 }
 
 
@@ -41,110 +45,102 @@ public class Logger2 {
         }
     }
     
-    private var _registered_writer_ids:[String] = []
+//    private var _registered_writer_ids:[String] = []
+//    
+//    public func registerWriter(id: String) {
+//        if !self._registered_writer_ids.contains(id) {
+//            self._registered_writer_ids.append(id)
+//        }
+//    }
     
-    public func registerWriter(id: String) {
-        if !self._registered_writer_ids.contains(id) {
-            self._registered_writer_ids.append(id)
-        }
-    }
     
-    
-    private func write(_ msg:String, type:LogType = .info) {
-        for _writer_id in self._registered_writer_ids {
-            if let writerFinder = self.writerFinder, let writer = writerFinder.findWriter(id: _writer_id) {
-                writer.write(message: msg)
+    private func write(_ msg:String, type:LogType = .info) async {
+        ConsoleLogger2.default.log("write \(type) message")
+        if let finder = self.writerFinder {
+            let writerIds = finder.findWriters(type: type, category: self._category, subCategory: self._subCategory)
+            
+            
+            ConsoleLogger2.default.log("found \(writerIds.count) writers")
+            
+            for writerId in writerIds {
+                if let writer = finder.findWriter(id: writerId) {
+                    await writer.write(message: msg)
+                }
             }
         }
     }
     
-    public func timecost(_ message:String, fromDate:Date) {
-        guard self.displayTypes.contains(.performance) && LoggerFactory.isLogTypeEnabled(.performance, category: _category, subCategory: _subCategory) else {return}
+    public func timecost(_ message:String, fromDate:Date) async {
         let msg = self.logMessageBuilder.build(logType: .performance, message: "\(message) - time cost: \(Date().timeIntervalSince(fromDate)) seconds", error: nil)
-        self.write(msg)
+        await self.write(msg)
     }
     
-    public func log(_ message:String) {
-        guard self.displayTypes.contains(.info) && LoggerFactory.isLogTypeEnabled(.info, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ message:String) async {
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        self.write(msg)
+        await self.write(msg)
     }
     
-    public func log(_ logType:LogType, _ message:String) {
-//        print("\(logType) contains? \(self.displayTypes.contains(logType) && LoggerFactory.isLogTypeEnabled(logType, category: _category, subCategory: _subCategory))")
-        guard self.displayTypes.contains(logType) && LoggerFactory.isLogTypeEnabled(logType, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ logType:LogType, _ message:String) async {
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        self.write(msg, type: logType)
+        await self.write(msg, type: logType)
     }
     
-    public func log(_ message:Int) {
-        guard self.displayTypes.contains(.info) && LoggerFactory.isLogTypeEnabled(.info, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ message:Int) async {
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        self.write(msg, type: .info)
+        await self.write(msg, type: .info)
     }
     
-    public func log(_ logType:LogType, _ message:Int) {
-        guard self.displayTypes.contains(logType) && LoggerFactory.isLogTypeEnabled(logType, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ logType:LogType, _ message:Int) async {
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        self.write(msg, type: logType)
+        await self.write(msg, type: logType)
     }
     
-    public func log(_ message:Double) {
-        guard self.displayTypes.contains(.info) && LoggerFactory.isLogTypeEnabled(.info, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ message:Double) async {
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        self.write(msg)
+        await self.write(msg)
     }
     
-    public func log(_ logType:LogType, _ message:Double) {
-        guard self.displayTypes.contains(logType) && LoggerFactory.isLogTypeEnabled(logType, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ logType:LogType, _ message:Double) async {
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        self.write(msg, type: logType)
+        await self.write(msg, type: logType)
     }
     
-    public func log(_ message:Float) {
-        guard self.displayTypes.contains(.info) && LoggerFactory.isLogTypeEnabled(.info, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ message:Float) async {
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        self.write(msg)
+        await self.write(msg)
     }
-    public func log(_ logType:LogType, _ message:Float) {
-        guard self.displayTypes.contains(logType) && LoggerFactory.isLogTypeEnabled(logType, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ logType:LogType, _ message:Float) async {
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        self.write(msg, type: logType)
+        await self.write(msg, type: logType)
     }
     
-    public func log(_ message:Any) {
-        guard self.displayTypes.contains(.info) && LoggerFactory.isLogTypeEnabled(.info, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ message:Any) async {
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        self.write(msg)
+        await self.write(msg)
     }
     
-    public func log(_ logType:LogType, _ message:Any) {
-        guard self.displayTypes.contains(logType) && LoggerFactory.isLogTypeEnabled(logType, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ logType:LogType, _ message:Any) async {
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        self.write(msg)
+        await self.write(msg)
     }
     
-    public func log(_ message:Error) {
-        guard self.displayTypes.contains(.info) && LoggerFactory.isLogTypeEnabled(.info, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ message:Error) async {
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: message)
-        self.write(msg)
+        await self.write(msg)
     }
     
-    public func log(_ logType:LogType, _ message:Error) {
-        guard self.displayTypes.contains(logType) && LoggerFactory.isLogTypeEnabled(logType, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ logType:LogType, _ message:Error) async {
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        self.write(msg)
+        await self.write(msg)
     }
     
-    public func log(_ message:String, _ error:Error) {
-        guard self.displayTypes.contains(.info) && LoggerFactory.isLogTypeEnabled(.info, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ message:String, _ error:Error) async {
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: error)
-        self.write(msg)
+        await self.write(msg)
     }
     
-    public func log(_ logType:LogType, _ message:String, _ error:Error) {
-        guard self.displayTypes.contains(logType) && LoggerFactory.isLogTypeEnabled(logType, category: _category, subCategory: _subCategory) else {return}
+    public func log(_ logType:LogType, _ message:String, _ error:Error) async {
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: error)
-        self.write(msg, type: logType)
+        await self.write(msg, type: logType)
     }
 }

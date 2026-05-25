@@ -16,28 +16,26 @@ final class LoggerSettingTests: XCTestCase {
         
     }
     
-    func testLoadSettings() throws {
+    func testLoadSettings() async throws {
         
         LoggerFactory2.default.registerConsoleLogger()
         LoggerFactory2.default.registerFileLogger(id: "test1", folder: "~/logs", filename: "logger-setting-test1")
         
-        let logger = LoggerFactory2.default.get(category: "Test", subCategory: "testSetting")
+        let logger = LoggerFactory2.default.get(category: "TestA", subCategory: "AA__BB__CC")
         
-        logger.log(.info, "this is an info")
-        logger.log(.warning, "this is a warning")
-        logger.log(.error, "this is an error")
-        logger.log(.debug, "this is for debug only")
-        logger.log(.trace, "this is for trace only")
+        await logger.log(.info, "this is an info")
+        await logger.log(.warning, "this is a warning")
+        await logger.log(.error, "this is an error")
+        await logger.log(.debug, "this is for debug only")
+        await logger.log(.trace, "this is for trace only")
         
-        let logger2 = LoggerFactory2.default.get(category: "Test", subCategory: "testSetting2")
+        let logger2 = LoggerFactory2.default.get(category: "TestA", subCategory: "DD++EE++FF")
         
-        logger2.log(.info, "this is an info")
-        logger2.log(.warning, "this is a warning")
-        logger2.log(.error, "this is an error")
-        logger2.log(.debug, "this is for debug only")
-        logger2.log(.trace, "this is for trace only")
-        
-        let json = LoggerSetting2.default.getSettingsAsJson()
+        await logger2.log(.info, "this is an info")
+        await logger2.log(.warning, "this is a warning")
+        await logger2.log(.error, "this is an error")
+        await logger2.log(.debug, "this is for debug only")
+        await logger2.log(.trace, "this is for trace only")
         
         
         
