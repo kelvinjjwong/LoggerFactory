@@ -62,28 +62,7 @@ public class LoggerFactory2 {
     public func get(category:String, subCategory:String = "", types:[LogType] = []) -> Logger2 {
         let _types = types.count > 0 ? types : LogType.all()
         
-        let logger = Logger2(finder:self, category: category, subCategory: subCategory, types: _types)
-        
-//        for t in _types {
-//            var writers_id:Set<String> = []
-//            
-//            var writers = self.findWriters(type: t, category: category, subCategory: subCategory)
-//            
-//            for writer in writers {
-//                if !writers_id.contains(writer) {
-//                    writers_id.insert(writer)
-//                }
-//            }
-//            
-//            for writer_id in writers_id {
-//                if let _writer = _writers[writer_id] {
-//                    logger.registerWriter(id: writer_id)
-//                    
-//                    LoggerSetting2.default.addSetting(logtype: t, category: category, subCategory: subCategory, writerId: writer_id)
-//                }
-//            }
-//        }
-        return logger
+        return Logger2(finder:self, category: category, subCategory: subCategory, types: _types)
     }
 }
 

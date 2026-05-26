@@ -45,22 +45,9 @@ public class Logger2 {
         }
     }
     
-//    private var _registered_writer_ids:[String] = []
-//    
-//    public func registerWriter(id: String) {
-//        if !self._registered_writer_ids.contains(id) {
-//            self._registered_writer_ids.append(id)
-//        }
-//    }
-    
-    
     private func write(_ msg:String, type:LogType = .info) async {
-        ConsoleLogger2.default.log("write \(type) message")
         if let finder = self.writerFinder {
             let writerIds = finder.findWriters(type: type, category: self._category, subCategory: self._subCategory)
-            
-            
-            ConsoleLogger2.default.log("found \(writerIds.count) writers")
             
             for writerId in writerIds {
                 if let writer = finder.findWriter(id: writerId) {
