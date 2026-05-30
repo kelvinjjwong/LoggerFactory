@@ -57,77 +57,77 @@ public class Logger2 {
         }
     }
     
-    public func timecost(_ message:String, fromDate:Date) async {
-        let msg = self.logMessageBuilder.build(logType: .performance, message: "\(message) - time cost: \(Date().timeIntervalSince(fromDate)) seconds", error: nil)
+    public func timecost(_ message:String, fromDate:Date, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: .performance, message: "\(message) - time cost: \(Date().timeIntervalSince(fromDate)) seconds", error: nil, fileID: fileID, function: function, line: line)
         await self.write(msg)
     }
     
-    public func log(_ message:String) async {
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
+    public func log(_ message:String, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil, fileID: fileID, function: function, line: line)
         await self.write(msg)
     }
     
-    public func log(_ logType:LogType, _ message:String) async {
-        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
+    public func log(_ logType:LogType, _ message:String, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil, fileID: fileID, function: function, line: line)
         await self.write(msg, type: logType)
     }
     
-    public func log(_ message:Int) async {
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
+    public func log(_ message:Int, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil, fileID: fileID, function: function, line: line)
         await self.write(msg, type: .info)
     }
     
-    public func log(_ logType:LogType, _ message:Int) async {
+    public func log(_ logType:LogType, _ message:Int, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil, fileID: fileID, function: function, line: line)
+        await self.write(msg, type: logType)
+    }
+    
+    public func log(_ message:Double, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil, fileID: fileID, function: function, line: line)
+        await self.write(msg)
+    }
+    
+    public func log(_ logType:LogType, _ message:Double, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
         let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
         await self.write(msg, type: logType)
     }
     
-    public func log(_ message:Double) async {
+    public func log(_ message:Float, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
         let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
         await self.write(msg)
     }
-    
-    public func log(_ logType:LogType, _ message:Double) async {
-        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
+    public func log(_ logType:LogType, _ message:Float, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil, fileID: fileID, function: function, line: line)
         await self.write(msg, type: logType)
     }
     
-    public func log(_ message:Float) async {
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
-        await self.write(msg)
-    }
-    public func log(_ logType:LogType, _ message:Float) async {
-        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
-        await self.write(msg, type: logType)
-    }
-    
-    public func log(_ message:Any) async {
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil)
+    public func log(_ message:Any, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: nil, fileID: fileID, function: function, line: line)
         await self.write(msg)
     }
     
-    public func log(_ logType:LogType, _ message:Any) async {
-        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
+    public func log(_ logType:LogType, _ message:Any, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil, fileID: fileID, function: function, line: line)
         await self.write(msg)
     }
     
-    public func log(_ message:Error) async {
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: message)
+    public func log(_ message:Error, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: message, fileID: fileID, function: function, line: line)
         await self.write(msg)
     }
     
-    public func log(_ logType:LogType, _ message:Error) async {
-        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil)
+    public func log(_ logType:LogType, _ message:Error, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: nil, fileID: fileID, function: function, line: line)
         await self.write(msg)
     }
     
-    public func log(_ message:String, _ error:Error) async {
-        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: error)
+    public func log(_ message:String, _ error:Error, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: .info, message: message, error: error, fileID: fileID, function: function, line: line)
         await self.write(msg)
     }
     
-    public func log(_ logType:LogType, _ message:String, _ error:Error) async {
-        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: error)
+    public func log(_ logType:LogType, _ message:String, _ error:Error, fileID: String = #fileID, function: String = #function, line: Int = #line) async {
+        let msg = self.logMessageBuilder.build(logType: logType, message: message, error: error, fileID: fileID, function: function, line: line)
         await self.write(msg, type: logType)
     }
 }

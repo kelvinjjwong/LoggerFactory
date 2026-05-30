@@ -47,16 +47,18 @@ public class LoggerFactory2 {
         return matchedWriterIds
     }
     
-    public func registerConsoleLogger() {
+    public func registerConsoleLogger() -> ConsoleLogger2 {
         let consoleLogger = ConsoleLogger2()
         _writers[consoleLogger.id()] = consoleLogger
         ConsoleLogger2.default.log("registered logger: console")
+        return consoleLogger
     }
     
-    public func registerFileLogger(id:String, folder:String, filename:String, forCategory:String = "", forSubCategory:String = "", forLogType:[LogType] = []) {
+    public func registerFileLogger(id:String, folder:String, filename:String, forCategory:String = "", forSubCategory:String = "", forLogType:[LogType] = []) -> FileLogger2 {
         let fileLogger = FileLogger2(id: id, folder: folder, filename: filename, forCategory: forCategory, forSubCategory: forSubCategory, forLogType: forLogType)
         _writers[fileLogger.id()] = fileLogger
         ConsoleLogger2.default.log("registered logger: \(fileLogger.toJSON())")
+        return fileLogger
     }
     
     public func get(category:String, subCategory:String = "", types:[LogType] = []) -> Logger2 {

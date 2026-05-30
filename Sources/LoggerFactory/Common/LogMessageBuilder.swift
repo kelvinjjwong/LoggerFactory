@@ -9,12 +9,12 @@
 import Foundation
 
 protocol LogMessageBuilderInterface {
-    func build(logType:LogType, message:String, error:Error?) -> String
-    func build(logType:LogType, message:Int, error:Error?) -> String
-    func build(logType:LogType, message:Double, error:Error?) -> String
-    func build(logType:LogType, message:Float, error:Error?) -> String
-    func build(logType:LogType, message:Any, error:Error?) -> String
-    func build(logType:LogType, error:Error) -> String
+    func build(logType:LogType, message:String, error:Error?, fileID: String, function: String, line: Int) -> String
+    func build(logType:LogType, message:Int, error:Error?, fileID: String, function: String, line: Int) -> String
+    func build(logType:LogType, message:Double, error:Error?, fileID: String, function: String, line: Int) -> String
+    func build(logType:LogType, message:Float, error:Error?, fileID: String, function: String, line: Int) -> String
+    func build(logType:LogType, message:Any, error:Error?, fileID: String, function: String, line: Int) -> String
+    func build(logType:LogType, error:Error, fileID: String, function: String, line: Int) -> String
 }
 
 public class LogMessageBuilder : LogMessageBuilderInterface {
@@ -37,55 +37,55 @@ public class LogMessageBuilder : LogMessageBuilderInterface {
         self.subCategory = subCategory
     }
     
-    fileprivate func prefix(category:String, subCategory:String) -> String {
+    fileprivate func prefix(category:String, subCategory:String, fileID: String = #fileID, function: String = #function, line: Int = #line) -> String {
         if subCategory == "" {
-            return "\(self.dtFormatter.string(from: Date())) [\(category)]"
+            return "\(LoggerSetting2.dateTimeFormat().string(from: Date())) [\(fileID.replacingOccurrences(of: ".swift", with: "", options: .backwards))#\(function):\(line)] [\(category)]"
         }else{
-            return "\(self.dtFormatter.string(from: Date())) [\(category)][\(subCategory)]"
+            return "\(LoggerSetting2.dateTimeFormat().string(from: Date())) [\(fileID.replacingOccurrences(of: ".swift", with: "", options: .backwards))#\(function):\(line)] [\(category)][\(subCategory)]"
         }
     }
     
-    public func build(logType:LogType, message:String, error:Error?) -> String {
+    public func build(logType:LogType, message:String, error:Error?, fileID: String = #fileID, function: String = #function, line: Int = #line) -> String {
         if let error = error {
-            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
+            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory, fileID: fileID, function: function, line: line)) \(message) - \(error)"
         }else{
-            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
+            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory, fileID: fileID, function: function, line: line)) \(message)"
         }
     }
     
-    public func build(logType:LogType, message:Int, error:Error?) -> String {
+    public func build(logType:LogType, message:Int, error:Error?, fileID: String = #fileID, function: String = #function, line: Int = #line) -> String {
         if let error = error {
-            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
+            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory, fileID: fileID, function: function, line: line)) \(message) - \(error)"
         }else{
-            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
+            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory, fileID: fileID, function: function, line: line)) \(message)"
         }
     }
     
-    public func build(logType:LogType, message:Double, error:Error?) -> String {
+    public func build(logType:LogType, message:Double, error:Error?, fileID: String = #fileID, function: String = #function, line: Int = #line) -> String {
         if let error = error {
-            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
+            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory, fileID: fileID, function: function, line: line)) \(message) - \(error)"
         }else{
-            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
+            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory, fileID: fileID, function: function, line: line)) \(message)"
         }
     }
     
-    public func build(logType:LogType, message:Float, error:Error?) -> String {
+    public func build(logType:LogType, message:Float, error:Error?, fileID: String = #fileID, function: String = #function, line: Int = #line) -> String {
         if let error = error {
-            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
+            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory, fileID: fileID, function: function, line: line)) \(message) - \(error)"
         }else{
-            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
+            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory, fileID: fileID, function: function, line: line)) \(message)"
         }
     }
     
-    public func build(logType:LogType, message:Any, error:Error?) -> String {
+    public func build(logType:LogType, message:Any, error:Error?, fileID: String = #fileID, function: String = #function, line: Int = #line) -> String {
         if let error = error {
-            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory)) \(message) - \(error)"
+            return "\(LogType.iconOfType(LogType.error)) \(self.prefix(category: category, subCategory: subCategory, fileID: fileID, function: function, line: line)) \(message) - \(error)"
         }else{
-            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(message)"
+            return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory, fileID: fileID, function: function, line: line)) \(message)"
         }
     }
     
-    public func build(logType:LogType, error:Error) -> String {
-        return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory)) \(error)"
+    public func build(logType:LogType, error:Error, fileID: String = #fileID, function: String = #function, line: Int = #line) -> String {
+        return "\(LogType.iconOfType(logType)) \(self.prefix(category: category, subCategory: subCategory, fileID: fileID, function: function, line: line)) \(error)"
     }
 }
