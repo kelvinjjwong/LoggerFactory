@@ -66,6 +66,17 @@ public class FileLogger2 : LogWriter2, Codable {
         }
     }
     
+    public func emptyFile() -> Self {
+        do {
+            let emptyData = Data()
+            try emptyData.write(to: self.logFileUrl)
+        } catch {
+            let msg = "[\(self._id)] Unable to clear file \(self.logFileUrl.path) - \(error)"
+            ConsoleLogger2.default.error(msg)
+        }
+        return self
+    }
+    
     
     public func roll(atSize: Int = 0, unit: ByteCountFormatter.Units = .useBytes, atHour: Int = -1, atMinute:Int = -1, everyDay:Bool = false, everyHour:Bool = false, everyMinute:Bool = false) -> Self {
 //        self.rollPolicy = FileRollPolicy(atSize: atSize, unit: unit, atHour: atHour, atMinute: atMinute, everyDay: everyDay, everyHour: everyHour, everyMinute: everyMinute)

@@ -19,9 +19,9 @@ final class LoggerSettingTests: XCTestCase {
     func testLoadSettings() async throws {
         
         let _ = LoggerFactory2.default.registerConsoleLogger()
-        let _ = LoggerFactory2.default.registerFileLogger(id: "test1", folder: "~/logs", filename: "logger-setting-test1")
-        let _ = LoggerFactory2.default.registerFileLogger(id: "test3", folder: "~/logs", filename: "logger-setting-test3", forCategory: "TestBBB")
-        let _ = LoggerFactory2.default.registerFileLogger(id: "test3-1", folder: "~/logs", filename: "logger-setting-test3-1", forCategory: "TestBBB", forLogType: [.debug, .error])
+        let _ = LoggerFactory2.default.registerFileLogger(id: "test1", folder: "~/logs", filename: "logger-setting-test1").emptyFile()
+        let _ = LoggerFactory2.default.registerFileLogger(id: "test3", folder: "~/logs", filename: "logger-setting-test3", forCategory: "TestBBB").emptyFile()
+        let _ = LoggerFactory2.default.registerFileLogger(id: "test3-1", folder: "~/logs", filename: "logger-setting-test3-1", forCategory: "TestBBB", forLogType: [.debug, .error]).emptyFile()
         
         let logger = LoggerFactory2.default.get(category: "TestAAA", subCategory: "AA__BB__CC")
         
